@@ -1,33 +1,48 @@
+import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { db } from "./lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
   },
+  pages: {
+    signIn: "/auth/sign-in",
+  },
   providers: [
     CredentialsProvider({
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
       credentials: {
         email: {},
         password: {},
       },
-      authorize: async (credentials) => {
-        let user = null;
+      async authorize(credentials) {
+        if (credentials === null) return null;
 
-        // logic to salt and hash password
+        try {
+          const user = await db.user.findUnique({
+            where: {
+              email: credentials.email as string,
+            },
+          });
+          console.log(user);
+          if (user) {
+            const isMatch: boolean = await bcrypt.compare(
+              credentials.password as string,
+              user.password as string,
+            );
 
-        // logic to verify if the user exists
-
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // meaning this is also the place you could do registration
-          throw new Error("User not found.");
+            if (isMatch) {
+              return user;
+            } else {
+              throw new Error("Email or Password is not correct");
+            }
+          } else {
+            throw new Error("User not found");
+          }
+        } catch (error: any) {
+          throw new Error(error);
         }
-
-        // return user object with their profile data
-        return user;
       },
     }),
   ],
