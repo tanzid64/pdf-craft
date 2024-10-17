@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
+import "react-loading-skeleton/dist/skeleton.css";
 import { Toaster } from "sonner";
 import "./globals.css";
 

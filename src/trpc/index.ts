@@ -1,7 +1,42 @@
-import { router } from "./trpc";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { protectedProcedure, router } from "./trpc";
 
 export const appRouter = router({
+  // Get all files for a user
+  getUserFiles: protectedProcedure.query(async ({ ctx }) => {
+    const { userId, db } = ctx;
+    return await db.file.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }),
 
-})
+  // delete a file
+  deleteFile: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId, db } = ctx;
+      const file = await db.file.findUnique({
+        where: {
+          id: input.id,
+          userId,
+        },
+      });
+
+      if (!file) throw new TRPCError({ code: "NOT_FOUND" });
+
+      await db.file.delete({
+        where: {
+          id: input.id,
+        },
+      });
+      return file;
+    }),
+});
 
 export type AppRouter = typeof appRouter;
