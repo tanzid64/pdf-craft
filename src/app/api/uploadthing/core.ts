@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-
+import { UploadThingError } from "uploadthing/server";
 const f = createUploadthing();
 
 export const ourFileRouter = {
@@ -9,8 +9,9 @@ export const ourFileRouter = {
     .middleware(async ({ req }) => {
       const session = await auth();
       const user = session?.user;
+      console.log(user);
 
-      if (!user || !user.id) throw new Error("Unauthorized");
+      if (!user || !user.id) throw new UploadThingError("Unauthorized");
 
       return { userId: user.id };
     })
@@ -20,7 +21,7 @@ export const ourFileRouter = {
           key: file.key,
           name: file.name,
           userId: metadata.userId,
-          url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
+          url: file.url,
           uploadStatus: "PROCESSING",
         }
       })
