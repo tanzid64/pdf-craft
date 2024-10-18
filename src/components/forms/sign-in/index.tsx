@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSignIn } from "@/hooks/auth/use-sign-in";
+import { usePathname } from "next/navigation";
 import { FC } from "react";
 
 export const SignInForm: FC = () => {

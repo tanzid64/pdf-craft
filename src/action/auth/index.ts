@@ -4,13 +4,18 @@ import { signIn, signOut } from "@/auth";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
+import type { NextRequest } from "next/server";
 
-export async function credentialsSignIn(email: string, password: string) {
+export async function credentialsSignIn(
+  email: string,
+  password: string,
+  redirectPath?: string | null,
+) {
   try {
     const result = await signIn("credentials", {
       email,
       password,
-      redirectTo: "/dashboard",
     });
 
     if (result) {
@@ -20,7 +25,7 @@ export async function credentialsSignIn(email: string, password: string) {
       };
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
@@ -41,11 +46,14 @@ export async function credentialsSignIn(email: string, password: string) {
       success: false,
       message: "An unexpected error occurred",
     };
+  } finally {
+    redirect(redirectPath ? `/${redirectPath}` : "/dashboard");
   }
 }
 
-export async function credentialsSignOut() {
-  await signOut();
+export async function credentialsSignOut(request: NextRequest) {
+  const res = await signOut();
+  console.log(res)
 }
 
 export async function credentialsSignUp(email: string, password: string) {

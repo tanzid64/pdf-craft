@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
+import { getFile } from "@/action/file";
 import { ChatWrapper } from "@/components/chat-wrapper";
 import { PdfRenderer } from "@/components/pdf-renderer";
-import { db } from "@/lib/db";
-import { notFound, redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { FC } from "react";
+import { toast } from "sonner";
 
 interface FilePageProps {
   params: { fileid: string };
@@ -11,22 +11,14 @@ interface FilePageProps {
 
 const FilePage: FC<FilePageProps> = async ({ params }) => {
   const { fileid } = params;
-  const session = await auth();
-  const user = session?.user;
-  if (!session?.user?.id) {
-    notFound();
+  const response = await getFile(fileid);
+  if (response.status !== 200) {
+    if (response.status === 401)
+      redirect(`/auth/sign-in?next=dashboard/${fileid}`);
+    toast.error(response.message);
   }
-  if (!user || !user.id) redirect(`/auth/sign-in`);
 
-  const file = await db.file.findFirst({
-    where: {
-      id: fileid,
-      userId: user.id,
-    },
-  });
-
-  if (!file) notFound();
-
+  const file = response.file!;
 
   return (
     <div className="flex-1 justify-between flex flex-col h-[calc(100vh-3.5rem)]">
