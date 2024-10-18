@@ -2,6 +2,7 @@
 import { FC, useState } from "react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { UploadDropzone } from "./upload-dropzone";
 
 interface UploadButtonProps {}
 
@@ -18,7 +19,9 @@ export const UploadButton: FC<UploadButtonProps> = ({}) => {
         <Button>Upload PDF</Button>
       </DialogTrigger>
 
-      <DialogContent>Example Content</DialogContent>
+      <DialogContent>
+        <UploadDropzone />
+      </DialogContent>
     </Dialog>
   );
 };

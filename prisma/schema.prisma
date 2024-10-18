@@ -34,14 +34,16 @@ model File {
 
   uploadStatus UploadStatus @default(PENDING)
 
-  url          String
-  key          String // to identify particular file from bucket
+  url          String // Cloudinary url
+  key          String // cloudinary public id
   messages     Message[]
 
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   User         User?        @relation(fields: [userId], references: [id])
   userId       String?      @db.Uuid
+
+  @@index([key])
 }
 
 model Message {
