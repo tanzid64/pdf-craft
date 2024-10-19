@@ -16,6 +16,22 @@ export const appRouter = router({
     });
   }),
 
+  // get file upload status
+  getFileUploadStatus: protectedProcedure
+    .input(z.object({ fileId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const file = await ctx.db.file.findFirst({
+        where: {
+          id: input.fileId,
+          userId: ctx.userId,
+        },
+      });
+
+      if (!file) return { status: "PENDING" as const };
+
+      return { status: file.uploadStatus };
+    }),
+
   // get file
   getFile: protectedProcedure
     .input(z.object({ key: z.string() }))

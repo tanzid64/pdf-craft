@@ -1,7 +1,12 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { pineconeIndex } from "@/lib/pinecone";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+
 const f = createUploadthing();
 
 export const ourFileRouter = {
@@ -23,8 +28,40 @@ export const ourFileRouter = {
           userId: metadata.userId,
           url: file.url,
           uploadStatus: "PROCESSING",
-        }
-      })
+        },
+      });
+
+      // Process the file with the OpenAI Embeddings while uploading
+      try {
+        const respone = await fetch(file.url);
+        const blob = await respone.blob();
+
+        const loader = new PDFLoader(blob); // load in the memory to work with the file
+        const pageLevelDocs = await loader.load();
+
+        const pagesAmt = pageLevelDocs.length;
+
+        //vectorize & indexing the document
+        const embeddings = new OpenAIEmbeddings({
+          openAIApiKey: process.env.OPENAI_API_KEY!,
+        });
+
+        await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+          pineconeIndex,
+          namespace: createFile.id,
+        });
+
+        await db.file.update({
+          where: { id: createFile.id },
+          data: { uploadStatus: "SUCCESS" },
+        });
+      } catch (error) {
+        console.log(error);
+        await db.file.update({
+          where: { id: createFile.id },
+          data: { uploadStatus: "FAILED" },
+        });
+      }
     }),
 } satisfies FileRouter;
 
