@@ -1,12 +1,15 @@
 import { Send } from "lucide-react";
-import { FC } from "react";
+import { FC, useContext, useRef } from "react";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { ChatContext } from "@/context/chat-context";
 interface ChatInputProps {
   isDisabled?: boolean;
 }
 
 export const ChatInput: FC<ChatInputProps> = ({ isDisabled }) => {
+  const {addMessage, handleInputChange, isLoading, message} = useContext(ChatContext);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   return (
     <div className="absolute bottom-0 left-0 w-full">
@@ -16,18 +19,18 @@ export const ChatInput: FC<ChatInputProps> = ({ isDisabled }) => {
             <div className="relative">
               <Textarea
                 rows={1}
-                // ref={textareaRef}
+                ref={textareaRef}
                 maxRows={4}
                 autoFocus
-                // onChange={handleInputChange}
-                // value={message}
+                onChange={handleInputChange}
+                value={message}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
 
-                    // addMessage();
+                    addMessage();
 
-                    // textareaRef.current?.focus();
+                    textareaRef.current?.focus();
                   }
                 }}
                 placeholder="Enter your question..."
@@ -35,13 +38,13 @@ export const ChatInput: FC<ChatInputProps> = ({ isDisabled }) => {
               />
 
               <Button
-                // disabled={isLoading || isDisabled}
+                disabled={isLoading || isDisabled}
                 className="absolute bottom-1.5 right-[8px]"
                 aria-label="send message"
                 onClick={() => {
-                  // addMessage();
+                  addMessage();
 
-                  // textareaRef.current?.focus();
+                  textareaRef.current?.focus();
                 }}
               >
                 <Send className="h-4 w-4" />

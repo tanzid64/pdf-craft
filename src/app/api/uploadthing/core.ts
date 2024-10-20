@@ -6,6 +6,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 
 const f = createUploadthing();
 
@@ -41,10 +42,14 @@ export const ourFileRouter = {
 
         const pagesAmt = pageLevelDocs.length;
 
-        //vectorize & indexing the document
+        // vectorize & indexing the document
         const embeddings = new OpenAIEmbeddings({
           openAIApiKey: process.env.OPENAI_API_KEY!,
         });
+
+        // const embeddings = new GoogleGenerativeAIEmbeddings({
+        //   apiKey: process.env.GOOGLE_API_KEY!,
+        // });
 
         await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
           pineconeIndex,

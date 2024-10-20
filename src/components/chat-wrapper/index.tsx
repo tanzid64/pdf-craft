@@ -1,11 +1,12 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
+import { ChatContextProvider } from "@/context/chat-context";
 import { ChevronLeft, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 import { buttonVariants } from "../ui/button";
 import { ChatInput } from "./chat-input";
-import { Messages } from "./message";
+import { Messages } from "./messages";
 
 interface ChatWrapperProps {
   fileId: string;
@@ -57,7 +58,7 @@ export const ChatWrapper: FC<ChatWrapperProps> = ({ fileId }) => {
       </div>
     );
 
-  if (data?.status === "FAILED") {
+  if (data?.status === "FAILED")
     return (
       <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
@@ -65,8 +66,15 @@ export const ChatWrapper: FC<ChatWrapperProps> = ({ fileId }) => {
             <XCircle className="h-8 w-8 text-red-500" />
             <h3 className="font-semibold text-xl">Too many pages in PDF</h3>
             <p className="text-zinc-500 text-sm">
-              Your <span className="font-medium">Free</span> plan only supports
-              up to 10 pages
+              {/* Your{" "}
+              <span className="font-medium">
+                {isSubscribed ? "Pro" : "Free"}
+              </span>{" "}
+              plan supports up to{" "}
+              {isSubscribed
+                ? PLANS.find((p) => p.name === "Pro")?.pagesPerPdf
+                : PLANS.find((p) => p.name === "Free")?.pagesPerPdf}{" "}
+              pages per PDF. */}
             </p>
             <Link
               href="/dashboard"
@@ -84,14 +92,17 @@ export const ChatWrapper: FC<ChatWrapperProps> = ({ fileId }) => {
         <ChatInput isDisabled />
       </div>
     );
-  }
 
   return (
-    <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2 ">
-      <div className="flex-1 flex justify-center items-center flex-col mb-28">
-        <Messages />
+    <ChatContextProvider fileId={fileId}>
+      <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2">
+        <div className="flex-1 justify-between flex flex-col mb-28">
+          <Messages fileId={fileId} />
+        </div>
+        <div>
+          <ChatInput />
+        </div>
       </div>
-      <ChatInput />
-    </div>
+    </ChatContextProvider>
   );
-};
+}
