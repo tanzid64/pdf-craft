@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FC } from "react";
 import { MaxWidthWrapper } from "../global/max-width-wrapper";
 import { Button, buttonVariants } from "../ui/button";
+import { SignOutButton } from "@clerk/nextjs";
 
 export const Navbar: FC = () => {
   const { userId } = auth();
@@ -56,11 +57,11 @@ export const Navbar: FC = () => {
                 >
                   Dashboard
                 </Link>
-                <form>
+                <SignOutButton>
                   <Button variant={"outline"} size={"sm"} type="submit">
                     Logout
                   </Button>
-                </form>
+                </SignOutButton>
               </>
             )}
           </div>
