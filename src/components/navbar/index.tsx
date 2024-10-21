@@ -5,6 +5,7 @@ import { FC } from "react";
 import { MaxWidthWrapper } from "../global/max-width-wrapper";
 import { MobileNav } from "../mobile-nav";
 import { Button, buttonVariants } from "../ui/button";
+import Image from "next/image";
 
 export const Navbar: FC = () => {
   const { userId } = auth();
@@ -13,7 +14,13 @@ export const Navbar: FC = () => {
       <MaxWidthWrapper>
         <div className="flex h-14 items-center justify-between border-b border-zinc-200">
           <Link href="/" className="flex z-40 font-semibold">
-            <span>quill.</span>
+            <Image
+              src={"/logo.png"}
+              alt="logo"
+              width={100}
+              height={100}
+              className="z-40"
+            />
           </Link>
 
           <MobileNav isAuth={!!userId} />
