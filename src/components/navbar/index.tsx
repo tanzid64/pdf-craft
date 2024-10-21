@@ -1,9 +1,10 @@
+import { SignOutButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { FC } from "react";
 import { MaxWidthWrapper } from "../global/max-width-wrapper";
+import { MobileNav } from "../mobile-nav";
 import { Button, buttonVariants } from "../ui/button";
-import { SignOutButton } from "@clerk/nextjs";
 
 export const Navbar: FC = () => {
   const { userId } = auth();
@@ -15,7 +16,7 @@ export const Navbar: FC = () => {
             <span>quill.</span>
           </Link>
 
-          {/* Mobile Nav */}
+          <MobileNav isAuth={!!userId} />
           <div className="hidden items-center space-x-4 sm:flex">
             {!userId ? (
               <>
