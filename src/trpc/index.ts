@@ -1,4 +1,6 @@
 import { INFINITE_QUERY_LIMIT } from "@/lib/constants/infinite-query";
+import { getUserSubscriptionPlan, PLANS, stripe } from "@/lib/stripe";
+import { absoluteUrl } from "@/lib/utils";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "./trpc";
@@ -126,6 +128,52 @@ export const appRouter = router({
       });
       return file;
     }),
+
+  createStripeSession: protectedProcedure.mutation(async ({ ctx }) => {
+    const { userId, db } = ctx;
+    const billingUrl = absoluteUrl("/dashboard/billing");
+    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+    const dbUser = await db.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+    const subscriptionPlan = await getUserSubscriptionPlan();
+    if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+      const stripeSession = await stripe.billingPortal.sessions.create({
+        customer: dbUser.stripeCustomerId,
+        return_url: billingUrl,
+      });
+
+      return {
+        url: stripeSession.url,
+      };
+    }
+
+    const stripeSession = await stripe.checkout.sessions.create({
+      success_url: billingUrl,
+      cancel_url: billingUrl,
+      payment_method_types: ["card", "paypal"],
+      mode: "subscription",
+      billing_address_collection: "auto",
+      line_items: [
+        {
+          price: PLANS.find((p) => p.name === "Pro")?.price.priceIds.test,
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        userId,
+      }
+    });
+
+    return {
+      url: stripeSession.url,
+    };
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,7 +1,13 @@
 import { auth } from "@/auth";
 import { MaxWidthWrapper } from "@/components/global/max-width-wrapper";
 import { buttonVariants } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { UpgradeButton } from "@/components/upgrade-button";
 import { pricingItems } from "@/lib/constants/pricing-items";
 import { PLANS } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
@@ -124,8 +130,7 @@ const PricingPage: FC = async () => {
                         <ArrowRight className="h-5 w-5 ml-1.5" />
                       </Link>
                     ) : user ? (
-                      // <UpgradeButton /> 
-                      <>Upgrade button</>
+                      <UpgradeButton />
                     ) : (
                       <Link
                         href="/sign-in"
@@ -149,4 +154,3 @@ const PricingPage: FC = async () => {
 };
 
 export default PricingPage;
-
