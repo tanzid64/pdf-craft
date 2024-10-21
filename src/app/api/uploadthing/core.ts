@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getUserFromDb } from "@/action/auth";
 import { db } from "@/lib/db";
 import { pineconeIndex } from "@/lib/pinecone";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
@@ -12,9 +12,7 @@ const f = createUploadthing();
 export const ourFileRouter = {
   pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
     .middleware(async ({ req }) => {
-      const session = await auth();
-      const user = session?.user;
-      console.log(user);
+      const user = await getUserFromDb();
 
       if (!user || !user.id) throw new UploadThingError("Unauthorized");
 

@@ -1,12 +1,12 @@
-import { auth } from "@/auth";
+import { getUserFromDb } from "@/action/auth";
 import { db } from "@/lib/db";
 import { initTRPC, TRPCError } from "@trpc/server";
 
 const t = initTRPC.create();
 
 const isAuthenticated = t.middleware(async (opts) => {
-  const session = await auth();
-  const user = session?.user;
+  const user = await getUserFromDb();
+
   if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
 
   return opts.next({

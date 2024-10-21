@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import TRPCProvider from "@/components/provider/trpc-provider";
 import { cn } from "@/lib/utils";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
@@ -29,13 +30,15 @@ export default function RootLayout({
           inter.className,
         )}
       >
-        <TRPCProvider>
-          <SessionProvider>
-            <Navbar />
-            {children}
-            <Toaster />
-          </SessionProvider>
-        </TRPCProvider>
+        <ClerkProvider>
+          <TRPCProvider>
+            <SessionProvider>
+              <Navbar />
+              {children}
+              <Toaster />
+            </SessionProvider>
+          </TRPCProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

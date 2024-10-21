@@ -1,11 +1,10 @@
 "use server";
 
-import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
 
 export async function getFile(fileId: string) {
-  const session = await auth();
-  const userId = session?.user?.id;
+  const {userId} = await auth();
   if (!userId)
     return {
       status: 401,

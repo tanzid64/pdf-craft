@@ -1,13 +1,11 @@
-import { credentialsSignOut } from "@/action/auth";
-import { auth } from "@/auth";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { FC } from "react";
 import { MaxWidthWrapper } from "../global/max-width-wrapper";
 import { Button, buttonVariants } from "../ui/button";
 
-export const Navbar: FC = async () => {
-  const session = await auth();
-  const user = session?.user;
+export const Navbar: FC = () => {
+  const { userId } = auth();
   return (
     <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
@@ -18,7 +16,7 @@ export const Navbar: FC = async () => {
 
           {/* Mobile Nav */}
           <div className="hidden items-center space-x-4 sm:flex">
-            {!user ? (
+            {!userId ? (
               <>
                 <Link
                   href="/pricing"
@@ -58,7 +56,7 @@ export const Navbar: FC = async () => {
                 >
                   Dashboard
                 </Link>
-                <form action={credentialsSignOut}>
+                <form>
                   <Button variant={"outline"} size={"sm"} type="submit">
                     Logout
                   </Button>

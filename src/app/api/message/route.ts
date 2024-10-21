@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getUserFromDb } from "@/action/auth";
 import { db } from "@/lib/db";
 import { openai } from "@/lib/openai";
 import { pineconeIndex } from "@/lib/pinecone";
@@ -10,8 +10,7 @@ import { NextRequest } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const session = await auth();
-  const user = session?.user;
+  const user = await getUserFromDb();
   if (!user || !user.id) new Response("Unauthorized", { status: 401 });
   const { fileId, message } = SendMessageValidator.parse(body);
   const file = await db.file.findUnique({
