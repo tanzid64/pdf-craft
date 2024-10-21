@@ -1,14 +1,16 @@
 import { SignOutButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 import { MaxWidthWrapper } from "../global/max-width-wrapper";
 import { MobileNav } from "../mobile-nav";
 import { Button, buttonVariants } from "../ui/button";
-import Image from "next/image";
+import UserAccountNav from "../user-account";
 
-export const Navbar: FC = () => {
+export const Navbar: FC = async () => {
   const { userId } = auth();
+  const user = await currentUser();
   return (
     <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
@@ -70,6 +72,15 @@ export const Navbar: FC = () => {
                     Logout
                   </Button>
                 </SignOutButton>
+                <UserAccountNav
+                  name={
+                    !user?.firstName || !user.lastName
+                      ? "Your Account"
+                      : `${user.firstName} ${user.lastName}`
+                  }
+                  email={user?.emailAddresses?.[0]?.emailAddress ?? ""}
+                  imageUrl={user?.imageUrl ?? ""}
+                />
               </>
             )}
           </div>

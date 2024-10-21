@@ -6,6 +6,15 @@ const nextConfig = {
 
     return config;
   },
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
