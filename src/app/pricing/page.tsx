@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getUserFromDb } from "@/action/auth";
 import { MaxWidthWrapper } from "@/components/global/max-width-wrapper";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -16,8 +16,7 @@ import Link from "next/link";
 import { FC } from "react";
 
 const PricingPage: FC = async () => {
-  const session = await auth();
-  const user = session?.user;
+  const user = await getUserFromDb();
   return (
     <>
       <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-5xl">
