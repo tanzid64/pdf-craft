@@ -5,7 +5,6 @@ import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
-import type { NextRequest } from "next/server";
 
 export async function credentialsSignIn(
   email: string,
@@ -51,9 +50,8 @@ export async function credentialsSignIn(
   }
 }
 
-export async function credentialsSignOut(request: NextRequest) {
-  const res = await signOut();
-  console.log(res)
+export async function credentialsSignOut() {
+  await signOut();
 }
 
 export async function credentialsSignUp(email: string, password: string) {
@@ -68,7 +66,7 @@ export async function credentialsSignUp(email: string, password: string) {
         success: false,
         message: "Email already exists",
       };
-    const newUser = await db.user.create({
+    await db.user.create({
       data: {
         email,
         password: await bcrypt.hash(password, 10),

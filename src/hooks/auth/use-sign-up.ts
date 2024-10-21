@@ -2,7 +2,6 @@
 import { credentialsSignUp } from "@/action/auth";
 import { SignUpSchema } from "@/lib/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set } from "date-fns";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

@@ -6,7 +6,6 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 
 const f = createUploadthing();
 
@@ -40,7 +39,7 @@ export const ourFileRouter = {
         const loader = new PDFLoader(blob); // load in the memory to work with the file
         const pageLevelDocs = await loader.load();
 
-        const pagesAmt = pageLevelDocs.length;
+        pageLevelDocs.length;
 
         // vectorize & indexing the document
         const embeddings = new OpenAIEmbeddings({

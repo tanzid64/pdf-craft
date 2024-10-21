@@ -133,7 +133,7 @@ export const ChatContextProvider = ({
           (old) => {
             if (!old) return { pages: [], pageParams: [] };
 
-            let isAiResponseCreated = old.pages.some((page) =>
+            const isAiResponseCreated = old.pages.some((page) =>
               page.messages.some((message) => message.id === "ai-response"),
             );
 

@@ -1,10 +1,9 @@
 import { credentialsSignOut } from "@/action/auth";
-import { useSession } from "next-auth/react";
+import { auth } from "@/auth";
 import Link from "next/link";
 import { FC } from "react";
 import { MaxWidthWrapper } from "../global/max-width-wrapper";
 import { Button, buttonVariants } from "../ui/button";
-import { auth } from "@/auth";
 
 export const Navbar: FC = async () => {
   const session = await auth();

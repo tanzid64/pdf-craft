@@ -1,10 +1,8 @@
-
 import { getFile } from "@/action/file";
 import { ChatWrapper } from "@/components/chat-wrapper";
 import { PdfRenderer } from "@/components/pdf-renderer";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { FC } from "react";
-import { toast } from "sonner";
 
 interface FilePageProps {
   params: { fileid: string };
