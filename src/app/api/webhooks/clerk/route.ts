@@ -4,17 +4,18 @@ export async function POST(req: Request) {
   const data = await req.json();
   const emailAddress = data.email_address[0].email_address;
   const id = data.id;
+  console.log(data);
 
-  await db.user.upsert({
-    where: {
-      id,
-    },
-    create: {
-      id,
-      email: emailAddress,
-    },
-    update: {
-      email: emailAddress,
-    },
-  });
+  // const user = await db.user.upsert({
+  //   where: {
+  //     id,
+  //   },
+  //   create: {
+  //     id,
+  //     email: emailAddress,
+  //   },
+  //   update: {
+  //     email: emailAddress,
+  //   },
+  // });
 }
