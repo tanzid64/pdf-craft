@@ -7,7 +7,12 @@ import { FC, useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
 import { Progress } from "../ui/progress";
-export const UploadDropzone: FC = () => {
+
+interface UploadDropzoneProps {
+  isSubscribed: boolean;
+}
+
+export const UploadDropzone: FC<UploadDropzoneProps> = ({ isSubscribed }) => {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -19,7 +24,9 @@ export const UploadDropzone: FC = () => {
     retryDelay: 500,
   });
 
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing(
+    isSubscribed ? "proPlanUploader" : "freePlanUploader",
+  );
   const startSimulatedProgress = () => {
     setUploadProgress(0);
     const interval = setInterval(() => {
@@ -46,6 +53,7 @@ export const UploadDropzone: FC = () => {
             description: "Please try again later",
           });
         }
+        console.log(res);
 
         const [fileResponse] = res!; // taking the first file from response
 
@@ -79,9 +87,9 @@ export const UploadDropzone: FC = () => {
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                {/* <p className="text-xs text-zinc-500">
+                <p className="text-xs text-zinc-500">
                   PDF (up to {isSubscribed ? "16" : "4"}MB)
-                </p> */}
+                </p>
               </div>
               {acceptedFiles && acceptedFiles[0] ? (
                 <div className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200">

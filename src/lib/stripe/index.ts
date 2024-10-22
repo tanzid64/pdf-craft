@@ -1,7 +1,6 @@
-import { getUserFromDb } from "@/action/auth";
+import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
 import { db } from "../db";
-import { auth } from "@clerk/nextjs/server";
 export const PLANS = [
   {
     name: "Free",
@@ -37,7 +36,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function getUserSubscriptionPlan() {
-  const {userId} = await auth();
+  const { userId } = auth();
   if (!userId) {
     return {
       ...PLANS[0],
@@ -46,7 +45,11 @@ export async function getUserSubscriptionPlan() {
       stripeCurrentPeriodEnd: null,
     };
   }
-  const dbUser = await getUserFromDb();
+  const dbUser = await db.user.findUnique({
+    where: {
+      id: userId!,
+    },
+  });
 
   if (!dbUser) {
     return {

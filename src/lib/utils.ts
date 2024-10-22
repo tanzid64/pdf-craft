@@ -48,7 +48,6 @@ export function constructMetadata({
     },
     icons,
     metadataBase: new URL("https://pdf-craft.vercel.app"),
-    themeColor: "#FFF",
     authors: [{ name: "tanzid64" }],
     creator: "tanzid64",
     publisher: "tanzid64",

@@ -1,8 +1,8 @@
-import { getUserFromDb } from "@/action/auth";
 import { db } from "@/lib/db";
 import { openai } from "@/lib/openai";
 import { pineconeIndex } from "@/lib/pinecone";
 import { SendMessageValidator } from "@/lib/validators/send-message-validator";
+import { auth } from "@clerk/nextjs/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIStream, StreamingTextResponse } from "ai";
@@ -10,8 +10,9 @@ import { NextRequest } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const user = await getUserFromDb();
-  if (!user || !user.id) new Response("Unauthorized", { status: 401 });
+  const { userId } = auth();
+  if (!userId) new Response("Unauthorized", { status: 401 });
+  const user = await db.user.findUnique({ where: { id: userId! } });
   const { fileId, message } = SendMessageValidator.parse(body);
   const file = await db.file.findUnique({
     where: { id: fileId, userId: user?.id },
