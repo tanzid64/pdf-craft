@@ -1,4 +1,3 @@
-import { getUserFromDb } from "@/action/auth";
 import { MaxWidthWrapper } from "@/components/global/max-width-wrapper";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -9,14 +8,21 @@ import {
 } from "@/components/ui/tooltip";
 import { UpgradeButton } from "@/components/upgrade-button";
 import { pricingItems } from "@/lib/constants/pricing-items";
+import { db } from "@/lib/db";
 import { PLANS } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, Check, HelpCircle, Minus } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 
 const PricingPage: FC = async () => {
-  const user = await getUserFromDb();
+  const clerkUser = await currentUser();
+  const user = await db.user.findUnique({
+    where: {
+      id: clerkUser?.id!,
+    },
+  });
   return (
     <>
       <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-5xl">
@@ -119,7 +125,7 @@ const PricingPage: FC = async () => {
                   <div className="p-5">
                     {plan === "Free" ? (
                       <Link
-                        href={user ? "/dashboard" : "/sign-in"}
+                        href={user ? "/dashboard" : "/auth/sign-in"}
                         className={buttonVariants({
                           className: "w-full",
                           variant: "secondary",

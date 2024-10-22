@@ -131,9 +131,12 @@ export const appRouter = router({
 
   createStripeSession: protectedProcedure.mutation(async ({ ctx }) => {
     const { userId, db } = ctx;
+
     const billingUrl = absoluteUrl("/dashboard/billing");
+
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-    const dbUser = await db.user.findUnique({
+
+    const dbUser = await db.user.findFirst({
       where: {
         id: userId,
       },
@@ -142,15 +145,14 @@ export const appRouter = router({
     if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
 
     const subscriptionPlan = await getUserSubscriptionPlan();
+
     if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
       const stripeSession = await stripe.billingPortal.sessions.create({
         customer: dbUser.stripeCustomerId,
         return_url: billingUrl,
       });
 
-      return {
-        url: stripeSession.url,
-      };
+      return { url: stripeSession.url };
     }
 
     const stripeSession = await stripe.checkout.sessions.create({
@@ -161,18 +163,16 @@ export const appRouter = router({
       billing_address_collection: "auto",
       line_items: [
         {
-          price: PLANS.find((p) => p.name === "Pro")?.price.priceIds.test,
+          price: PLANS.find((plan) => plan.name === "Pro")?.price.priceIds.test,
           quantity: 1,
         },
       ],
       metadata: {
-        userId,
-      }
+        userId: userId,
+      },
     });
 
-    return {
-      url: stripeSession.url,
-    };
+    return { url: stripeSession.url };
   }),
 });
 
