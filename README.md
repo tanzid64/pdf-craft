@@ -72,4 +72,4 @@ npm install
 npm run dev
 ```
 
-[Live Link]("https://pdf-craft.vercel.app/")
+[Live Link](https://pdf-craft.vercel.app/)
