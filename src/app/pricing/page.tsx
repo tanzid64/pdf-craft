@@ -11,18 +11,18 @@ import { pricingItems } from "@/lib/constants/pricing-items";
 import { db } from "@/lib/db";
 import { PLANS } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, Check, HelpCircle, Minus } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 
 const PricingPage: FC = async () => {
-  const clerkUser = await currentUser();
-  const user = await db.user.findUnique({
-    where: {
-      id: clerkUser?.id!,
-    },
-  });
+  const user = await currentUser();
+  // const user = await db.user.findUnique({
+  //   where: {
+  //     id: clerkUser?.id!,
+  //   },
+  // });
   return (
     <>
       <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-5xl">
@@ -138,7 +138,7 @@ const PricingPage: FC = async () => {
                       <UpgradeButton />
                     ) : (
                       <Link
-                        href="/sign-in"
+                        href="/auth/sign-in"
                         className={buttonVariants({
                           className: "w-full",
                         })}
